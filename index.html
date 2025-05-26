@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OZEU Guild Joiner</title>
+  <style>
+    /* スクロールバーのスタイル */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #202225; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: #5865f2; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #7289da; }
+
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg,#2f3136,#1e1f22);
+      color:#fff;
+      margin:0; padding:0;
+      display:flex; justify-content:center; align-items:center;
+      height:100vh;
+    }
+    .card {
+      background:#36393f;
+      padding:32px;
+      border-radius:20px;
+      box-shadow:0 15px 35px rgba(0,0,0,.5);
+      width:100%; max-width:600px;
+      animation:fadeIn .8s ease;
+      overflow:auto; max-height:95vh;
+    }
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    h2 { color:#adb8ff; text-align:center; margin:0 0 24px; font-weight:600; }
+    label { display:block; margin-top:18px; font-size:14px; }
+
+    /* テキスト入力 */
+    input[type="text"], textarea {
+      width:100%; padding:10px; margin-top:6px;
+      border-radius:8px; border:none;
+      background:#202225; color:#fff;
+      font-family:monospace; resize:vertical;
+    }
+    textarea { overflow-y:auto; }
+    input[type="number"] {
+      padding:6px; margin-top:6px;
+      border-radius:8px; border:none;
+      background:#202225; color:#fff;
+      font-family:monospace; appearance:none;
+      width:80px;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance:none; margin:0;
+    }
+
+    /* フレックス行 */
+    .row {
+      display:flex; gap:12px; align-items:center;
+    }
+    .row > * { flex:none; }
+    .row label,
+    .row .checkbox-container { margin-top:0; }
+
+    /* トグルスイッチ */
+    .checkbox-container {
+      display:flex; align-items:center; gap:8px;
+      cursor:pointer; font-size:14px; user-select:none;
+      margin-top:6px;
+    }
+    .checkbox-container input {
+      appearance:none; width:36px; height:18px;
+      background:#4f545c; border-radius:18px;
+      position:relative; transition:background .3s ease;
+    }
+    .checkbox-container:hover input { background:#5a5f68; }
+    .checkbox-container input:focus {
+      outline:none; box-shadow:0 0 0 3px rgba(114,137,218,0.5);
+    }
+    .checkbox-container input::before {
+      content:''; position:absolute;
+      width:14px; height:14px; border-radius:50%;
+      background:#fff; top:2px; left:2px;
+      transition:transform .3s cubic-bezier(.68,-.55,.27,1.55);
+    }
+    .checkbox-container input:checked { background:#7289da; }
+    .checkbox-container input:checked::before {
+      transform:translateX(18px);
+    }
+    .checkbox-container span { transition:color .3s; }
+    .checkbox-container input:checked + span {
+      color:#adb8ff;
+    }
+
+    /* ボタン */
+    button.primary {
+      margin-top:24px; width:100%; padding:14px;
+      border:none; border-radius:14px;
+      background:linear-gradient(135deg,#6d75ff,#5865f2);
+      color:#fff; font-weight:700; font-size:18px;
+      letter-spacing:.5px; cursor:pointer; position:relative;
+      box-shadow:
+        0 4px 15px rgba(88,101,242,.4),
+        0 0 10px rgba(255,255,255,.1),
+        inset 0 0 5px rgba(255,255,255,.2);
+      overflow:hidden; transition:all .3s;
+    }
+    button.primary:hover {
+      background:linear-gradient(135deg,#7d89ff,#4e57e0);
+      box-shadow:
+        0 6px 22px rgba(88,101,242,.6),
+        0 0 24px rgba(255,255,255,.2),
+        inset 0 0 10px rgba(255,255,255,.3);
+      transform:scale(1.03);
+    }
+    button.primary:active {
+      transform:scale(0.96);
+      box-shadow:inset 0 4px 6px rgba(0,0,0,.3);
+    }
+    button.primary.loading {
+      color: #ffffffa2; pointer-events:none;
+    }
+
+    button.secondary {
+      margin-top:8px; padding:6px 12px;
+      background:#5865f2; color:#fff;
+      font-size:14px; border:none; border-radius:6px;
+      position:relative; overflow:hidden;
+    }
+    button.secondary::after {
+      content:''; position:absolute;
+      top:0; left:0; width:100%; height:100%;
+      background:rgba(255,255,255,0.1);
+      opacity:0; transition:opacity .3s;
+    }
+    button.secondary:hover::after { opacity:1; }
+    button.secondary:active::after { background:rgba(255,255,255,0.2); }
+
+    /* 停止・退出ボタン強調 */
+    #stopSpam, #leaveBtn {
+      width:48%; padding:10px;
+      border:none; border-radius:10px;
+      background:linear-gradient(135deg,#e74c3c,#c0392b);
+      color:#fff; font-weight:700; font-size:14px;
+      letter-spacing:.5px; cursor:pointer; transition:all .3s;
+      margin-top:12px;
+      box-shadow: 0 4px 10px rgba(255,0,0,0.3);
+    }
+    #stopSpam:hover, #leaveBtn:hover {
+      background:linear-gradient(135deg,#c0392b,#e74c3c);
+      transform:scale(1.03);
+    }
+    #stopSpam:active, #leaveBtn:active {
+      transform:scale(0.96);
+      box-shadow:inset 0 4px 6px rgba(0,0,0,.3);
+    }
+
+    .button-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    /* Advanced options (details) */
+    details { margin-top:18px; }
+    summary { list-style:none; padding-left:20px; cursor:pointer; font-weight:600; position:relative; margin-top:0; }
+    summary::-webkit-details-marker { display:none; }
+    summary::marker { content:none; }
+    summary::before { content:'▶'; position:absolute; left:0; top:50%; transform:translateY(-50%); transition:transform .3s ease; }
+    details[open] > summary::before { transform:translateY(-50%) rotate(90deg); }
+    .detail-content { transform-origin:top center; transform:scaleY(0); opacity:0; transition:transform .3s ease, opacity .3s ease; }
+    details[open] .detail-content { transform:scaleY(1); opacity:1; }
+
+    #log { margin-top:20px; padding:10px; height:120px; overflow-y:auto; background:#202225; border-radius:10px; font-family:monospace; font-size:12px; white-space:pre-wrap; resize: vertical;}
+    @media (max-width: 600px) {
+      .card {
+        padding: 16px;
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 10px;
+      }
+
+      h2 {
+        font-size: 18px;
+        margin-bottom: 16px;
+      }
+
+      label {
+        font-size: 13px;
+        margin-top: 12px;
+      }
+
+      input[type="text"],
+      textarea,
+      input[type="number"] {
+        padding: 8px;
+        font-size: 12px;
+      }
+
+      button.primary {
+        padding: 12px;
+        font-size: 16px;
+      }
+
+      button.secondary {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+
+      .row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .row label {
+        width: 100%;
+      }
+
+      .button-container {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      #stopSpam,
+      #leaveBtn {
+        width: 100%;
+      }
+
+      details summary {
+        font-size: 13px;
+        padding-left: 18px;
+      }
+
+      .checkbox-container {
+        font-size: 13px;
+      }
+
+      #log {
+        height: 80px;
+        font-size: 11px;
+      }
+    }
+    .radio-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+    margin-right: 16px;
+  }
+
+  .radio-container input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #4f545c;
+    border: 2px solid #5865f2;
+    border-radius: 50%;
+    position: relative;
+    transition: background .3s ease, border-color .3s ease;
+  }
+
+  .radio-container input[type="radio"]::before {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 10px; height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform .2s ease-out;
+  }
+
+  .radio-container input[type="radio"]:checked {
+    background: #5865f2;
+    border-color: #7289da;
+  }
+
+  .radio-container input[type="radio"]:checked::before {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .radio-container span {
+    color: #fff;
+    transition: color .3s;
+  }
+  .radio-container input[type="radio"]:checked + span {
+    color: #adb8ff;
+  }
+
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>OZEU Guild Joiner</h2>
+    <form id="joinForm">
+      <label>トークン
+        <textarea id="tokens" rows="4" placeholder="カンマ / 改行 / スペースで区切る MTM1ODc4MTE3NTIzMzI1MzU*****,MTEwMDU5Njc1NjQ1NjE2MTMwM*****,..."></textarea>
+      </label>
+      <label>招待コード
+        <input type="text" id="invite" placeholder="ozeu-x" />
+      </label>
+      <button id="startJoin" type="button" class="primary">Join開始</button>
+    </form>
+
+    <div id="log" style="white-space: pre-wrap; margin-top: 16px; height: 120px; overflow-y: auto;
+      background: #202225; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 12px;"></div>
+
+    <label>Join成功トークン
+      <textarea id="successTokens" rows="4" readonly placeholder="成功したトークンが表示されます"></textarea>
+    </label>
+    <button id="copySuccess" class="secondary">コピー</button>
+
+    <label>Join失敗トークン
+      <textarea id="failedTokens" rows="4" readonly placeholder="失敗したトークンが表示されます"></textarea>
+    </label>
+    <button id="copyFailed" class="secondary">コピー</button>
+  </div>
+
+  <script>
+    const _0x1cb2b4=_0x53b0;function _0x4067(){const _0x50c3a7=['⚠️\x20招待コードチェック失敗:\x20','✅\x20成功:\x20','filter','7806HWLVrK','textContent','2106110DSPOEn','8qwzomW','104sNrJGm','https://allied.ozeu.net/joiner?token=','invite','disabled','push','writeText','*****\x20->\x20','toLocaleTimeString','json','&invite=','getElementById','map','catch','stringify','📋\x20コピーしました','click','1715396ekyfsE','❌\x20招待コード無効:\x20','2245iURiYP','startJoin','1661010cDmkqq','slice','*****','✅\x20招待コード有効:\x20','body','then','⚠️\x20招待コードを入力してください','11ffwPhm','log','length','10136rrJHbp','trim','copyFailed','scrollHeight','value','802081jTtiOS','\x20-\x20','token','実行中...','join','status','copySuccess','status_code','addEventListener','clipboard','successTokens','Join開始','split','6068439MTznmQ','⚠️\x20コピー失敗:\x20'];_0x4067=function(){return _0x50c3a7;};return _0x4067();}(function(_0x454716,_0x50ed97){const _0x1747b5=_0x53b0,_0x5113e0=_0x454716();while(!![]){try{const _0x3ffac7=parseInt(_0x1747b5(0xe3))/0x1*(parseInt(_0x1747b5(0xc8))/0x2)+parseInt(_0x1747b5(0xbe))/0x3+parseInt(_0x1747b5(0xba))/0x4+parseInt(_0x1747b5(0xbc))/0x5*(-parseInt(_0x1747b5(0xdf))/0x6)+parseInt(_0x1747b5(0xcd))/0x7*(-parseInt(_0x1747b5(0xe2))/0x8)+-parseInt(_0x1747b5(0xda))/0x9+-parseInt(_0x1747b5(0xe1))/0xa*(-parseInt(_0x1747b5(0xc5))/0xb);if(_0x3ffac7===_0x50ed97)break;else _0x5113e0['push'](_0x5113e0['shift']());}catch(_0x32c603){_0x5113e0['push'](_0x5113e0['shift']());}}}(_0x4067,0x54c3f));const logEl=document[_0x1cb2b4(0xed)](_0x1cb2b4(0xc6));function appendLog(_0x52309e){const _0x51fef4=_0x1cb2b4,_0x21ad12=new Date()[_0x51fef4(0xea)]();logEl[_0x51fef4(0xe0)]+='\x0a'+_0x21ad12+_0x51fef4(0xce)+_0x52309e,logEl['scrollTop']=logEl[_0x51fef4(0xcb)];}function _0x53b0(_0x3c94ce,_0x168968){const _0x40670f=_0x4067();return _0x53b0=function(_0x53b035,_0x527279){_0x53b035=_0x53b035-0xb7;let _0x4f6d39=_0x40670f[_0x53b035];return _0x4f6d39;},_0x53b0(_0x3c94ce,_0x168968);}function parseList(_0x3ad3c4){const _0x5b447c=_0x1cb2b4;return _0x3ad3c4[_0x5b447c(0xd9)](/[\s,]+/)[_0x5b447c(0xee)](_0x51a25e=>_0x51a25e[_0x5b447c(0xc9)]())[_0x5b447c(0xde)](Boolean);}async function copyToClipboard(_0x2979a5){const _0x58ee30=_0x1cb2b4;try{await navigator[_0x58ee30(0xd6)][_0x58ee30(0xe8)](_0x2979a5),appendLog(_0x58ee30(0xb8));}catch(_0x2cea9f){appendLog(_0x58ee30(0xdb)+_0x2cea9f);}}const startBtn=document[_0x1cb2b4(0xed)](_0x1cb2b4(0xbd)),successArea=document['getElementById'](_0x1cb2b4(0xd7)),failedArea=document[_0x1cb2b4(0xed)]('failedTokens'),copySucc=document[_0x1cb2b4(0xed)](_0x1cb2b4(0xd3)),copyFail=document['getElementById'](_0x1cb2b4(0xca)),tokensInput=document[_0x1cb2b4(0xed)]('tokens'),inviteInput=document[_0x1cb2b4(0xed)](_0x1cb2b4(0xe5));copySucc[_0x1cb2b4(0xd5)]('click',()=>copyToClipboard(successArea['value'])),copyFail[_0x1cb2b4(0xd5)](_0x1cb2b4(0xb9),()=>copyToClipboard(failedArea[_0x1cb2b4(0xcc)])),startBtn[_0x1cb2b4(0xd5)]('click',async()=>{const _0x1609e5=_0x1cb2b4,_0x575670=parseList(tokensInput[_0x1609e5(0xcc)]),_0x4883e5=inviteInput[_0x1609e5(0xcc)]['trim']();if(!_0x575670['length']){appendLog('⚠️\x20トークンを入力してください');return;}if(!_0x4883e5){appendLog(_0x1609e5(0xc4));return;}startBtn[_0x1609e5(0xe6)]=!![],startBtn[_0x1609e5(0xe0)]=_0x1609e5(0xd0),successArea['value']='',failedArea[_0x1609e5(0xcc)]='',logEl['textContent']='',appendLog('🟢\x20Join処理を開始');const _0x5a124f=_0x4883e5[_0x1609e5(0xd9)]('/')[_0x1609e5(0xde)](Boolean),_0x38b1dd=_0x5a124f[_0x5a124f[_0x1609e5(0xc7)]-0x1];successArea['value']='',failedArea['value']='',logEl[_0x1609e5(0xe0)]='';try{const _0x573112=await fetch('https://discord.com/api/v10/invites/'+_0x38b1dd);if(!_0x573112['ok']){appendLog(_0x1609e5(0xbb)+_0x38b1dd),startBtn[_0x1609e5(0xe6)]=![],startBtn[_0x1609e5(0xe0)]=_0x1609e5(0xd8);return;}}catch(_0x593a51){appendLog(_0x1609e5(0xdc)+_0x593a51),startBtn[_0x1609e5(0xe6)]=![],startBtn[_0x1609e5(0xe0)]=_0x1609e5(0xd8);return;}appendLog(_0x1609e5(0xc1)+_0x38b1dd);const _0x4995ee=await Promise['all'](_0x575670[_0x1609e5(0xee)](_0x4e5712=>fetch(_0x1609e5(0xe4)+encodeURIComponent(_0x4e5712)+_0x1609e5(0xec)+encodeURIComponent(_0x38b1dd))[_0x1609e5(0xc3)](async _0x32bf7e=>{const _0x4fe125=_0x1609e5,_0x712c4e=await _0x32bf7e[_0x4fe125(0xeb)]()[_0x4fe125(0xef)](()=>null);return{'token':_0x4e5712,'status':_0x32bf7e[_0x4fe125(0xd2)],'body':_0x712c4e};})[_0x1609e5(0xef)](_0x4cdd09=>({'token':_0x4e5712,'error':_0x4cdd09})))),_0x2f3bad=[],_0x20b01f=[];_0x4995ee['forEach'](_0x162cdd=>{const _0x5044a1=_0x1609e5;if(_0x162cdd['status']===0xc8&&_0x162cdd[_0x5044a1(0xc2)]?.[_0x5044a1(0xd4)]===0xc8)_0x2f3bad['push'](_0x162cdd[_0x5044a1(0xcf)]),appendLog(_0x5044a1(0xdd)+_0x162cdd[_0x5044a1(0xcf)][_0x5044a1(0xbf)](0x0,0xa)+_0x5044a1(0xc0));else{_0x20b01f[_0x5044a1(0xe7)](_0x162cdd[_0x5044a1(0xcf)]);const _0x5e9b42=_0x162cdd[_0x5044a1(0xc2)]?JSON[_0x5044a1(0xb7)](_0x162cdd[_0x5044a1(0xc2)]):String(_0x162cdd['error']);appendLog('❌\x20失敗:\x20'+_0x162cdd[_0x5044a1(0xcf)][_0x5044a1(0xbf)](0x0,0xa)+_0x5044a1(0xe9)+_0x5e9b42);}}),successArea[_0x1609e5(0xcc)]=_0x2f3bad[_0x1609e5(0xd1)]('\x0a'),failedArea[_0x1609e5(0xcc)]=_0x20b01f[_0x1609e5(0xd1)]('\x0a'),appendLog('🎉\x20完了'),startBtn[_0x1609e5(0xe6)]=![],startBtn[_0x1609e5(0xe0)]=_0x1609e5(0xd8);});
+  </script>
+</body>
+</html>
