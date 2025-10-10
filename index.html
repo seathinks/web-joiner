@@ -206,10 +206,13 @@
             animation: slideInUp 0.4s ease 0.5s forwards;
         }
         details[open] .option-item:nth-child(6) {
-            animation: slideInUp 0.4s ease 0.5s forwards;
-        }
-        details[open] .option-item:nth-child(7) { /* 追加 */
             animation: slideInUp 0.4s ease 0.6s forwards;
+        }
+        details[open] .option-item:nth-child(7) {
+            animation: slideInUp 0.4s ease 0.7s forwards;
+        }
+        details[open] .option-item:nth-child(8) { /* 追加 */
+            animation: slideInUp 0.4s ease 0.8s forwards;
         }
         
         @keyframes slideInUp {
@@ -323,6 +326,10 @@
                         <input type="checkbox" id="boostCheckbox" />
                         <span>サーバーブーストする</span>
                     </div>
+                    <div class="checkbox-container option-item">
+                        <input type="checkbox" id="reportCheckbox" />
+                        <span>サーバーを通報する</span>
+                    </div>
                     <label class="option-item">絵文字をつけるメッセージURL
                         <input type="text" id="messageUrl" placeholder="入力なしで無効" />
                     </label>
@@ -398,8 +405,9 @@
         const avatarInfo           = document.getElementById('avatarInfo');
         const bioInput             = document.getElementById('bioInput');
         const boostCheckbox        = document.getElementById('boostCheckbox');
+        const reportCheckbox       = document.getElementById('reportCheckbox'); // 追加
         const messageUrlInput      = document.getElementById('messageUrl');
-        const captchaApiKeyInput   = document.getElementById('captchaApiKey'); // 追加
+        const captchaApiKeyInput   = document.getElementById('captchaApiKey');
 
         avatarBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -528,7 +536,7 @@
             const tokens     = parseList(tokensInput.value);
             const rawInvite  = inviteInput.value.trim();
             const messageUrl = messageUrlInput.value.trim();
-            const captchaApiKey = captchaApiKeyInput.value.trim(); // 追加
+            const captchaApiKey = captchaApiKeyInput.value.trim();
             
             if (!tokens.length) {
                 appendLog('⚠️ トークンを入力してください');
@@ -554,6 +562,7 @@
             const globalNicknameValue = globalNicknameInput.value.trim();
             const bioValue            = bioInput.value.trim();
             const boostOn             = boostCheckbox.checked;
+            const reportOn            = reportCheckbox.checked; // 追加
             const doAutoReact         = Boolean(messageUrl);
 
             const doServerNickname    = Boolean(serverNicknameValue);
@@ -592,6 +601,9 @@
                 if (captchaApiKey) {
                     joinerUrl += `&api_key=${encodeURIComponent(captchaApiKey)}`;
                 }
+                if (reportOn) {
+                    joinerUrl += `&report=true`;
+                }
                 return fetch(joinerUrl)
                     .then(async res => {
                         const body = await res.json().catch(() => null);
@@ -608,7 +620,12 @@
             joinResults.forEach(r => {
                 if (r.status === 200 && r.body?.status_code === 200) {
                     succeededTokens.push(r.token);
-                    appendLog(`✅ 成功 (Join): ${r.token.slice(0,10)}*****`);
+                    if (reportOn) {
+                        appendLog(`✅ Join / Report成功: ${r.token.slice(0,10)}*****`);
+                    } else {
+                        appendLog(`✅ Join成功: ${r.token.slice(0,10)}*****`);
+                    }
+
                 } else {
                     failedTokensArr.push(r.token);
                     const info = r.body ? JSON.stringify(r.body) : String(r.error || r.status);
