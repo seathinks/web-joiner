@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>OZEU Guild Joiner</title>
     <style>
-        /* スクロールバーのスタイル */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #202225; border-radius: 3px; }
         ::-webkit-scrollbar-thumb { background: #5865f2; border-radius: 3px; }
@@ -26,17 +25,23 @@
             border-radius:20px;
             box-shadow:0 15px 35px rgba(0,0,0,.5);
             width:100%; max-width:600px;
-            animation:fadeIn .8s ease;
+            animation: fadeIn 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
             overflow:auto; max-height:95vh;
         }
         @keyframes fadeIn {
-            from { opacity:0; transform:translateY(20px); }
-            to   { opacity:1; transform:translateY(0); }
+            from { 
+                opacity: 0; 
+                transform: translateY(10px) scale(0.98); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
         }
+
         h2 { color:#adb8ff; text-align:center; margin:0 0 24px; font-weight:600; }
         label { display:block; margin-top:18px; font-size:14px; }
 
-        /* テキスト入力 */
         input[type="text"], textarea {
             width:100%; padding:10px; margin-top:6px;
             border-radius:8px; border:none;
@@ -55,21 +60,13 @@
         input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance:none; margin:0;
         }
-        
-        /* ファイル入力を隠す */
-        input[type="file"] {
-            display: none;
-        }
-
-        /* フレックス行 */
-        .row {
-            display:flex; gap:12px; align-items:center;
-        }
+        input[type="file"] { display: none; }
+        .row { display:flex; gap:12px; align-items:center; }
         .row > * { flex:none; }
         .row label,
         .row .checkbox-container { margin-top:0; }
 
-        /* トグルスイッチ */
+
         .checkbox-container {
             display:flex; align-items:center; gap:8px;
             cursor:pointer; font-size:14px; user-select:none;
@@ -99,7 +96,7 @@
             color:#adb8ff;
         }
 
-        /* ボタン */
+
         button.primary {
             margin-top:24px; width:100%; padding:14px;
             border:none; border-radius:14px;
@@ -127,7 +124,6 @@
         button.primary.loading {
             color: #ffffffa2; pointer-events:none;
         }
-
         button.secondary, .file-upload-btn {
             margin-top:8px; padding:6px 12px;
             background:#5865f2; color:#fff;
@@ -142,14 +138,12 @@
             background:rgba(255,255,255,0.1);
             opacity:0; transition:opacity .3s;
         }
-        button.secondary:hover::after, .file-upload-btn:hover::after { 
+        button.secondary:hover::after, .file-upload-btn::hover::after { 
             opacity:1; 
         }
         button.secondary:active::after, .file-upload-btn:active::after { 
             background:rgba(255,255,255,0.2); 
         }
-
-        /* ファイル選択状態の表示 */
         .file-info {
             margin-top: 4px;
             font-size: 12px;
@@ -157,7 +151,6 @@
             font-style: italic;
         }
 
-        /* Advanced Options のアニメーション */
         details { margin-top:18px; }
         summary {
             list-style:none; padding-left:20px; cursor:pointer; font-weight:600;
@@ -167,58 +160,51 @@
         summary::marker { content:none; }
         summary::before {
             content:'▶'; position:absolute; left:0; top:50%;
-            transform:translateY(-50%); transition:transform .3s ease;
+            transform:translateY(-50%); 
+            transition:transform .3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         details[open] > summary::before {
             transform:translateY(-50%) rotate(90deg);
         }
+
         .detail-content {
+            overflow: hidden;
             max-height: 0;
             opacity: 0;
-            overflow: hidden;
-            transition: max-height .4s ease, opacity .4s ease;
-        }
-        details[open] .detail-content {
-            max-height: 600px;
-            opacity: 1;
+            transform: translateY(-10px);
+            
+            padding-top: 0;
+            transition: max-height 0.3s ease-out, 
+                        opacity 0.2s ease-out, 
+                        transform 0.3s ease-out, 
+                        padding-top 0.3s ease-out;
+            will-change: max-height, opacity, transform, padding-top;
         }
         
-        /* 各オプション要素のアニメーション */
+        details[open] .detail-content {
+            opacity: 1;
+            transform: translateY(0);
+            padding-top: 5px;
+            transition: max-height 0.3s ease-in, 
+                        opacity 0.3s ease-in, 
+                        transform 0.3s ease-in, 
+                        padding-top 0.3s ease-in;
+        }
+
         .option-item {
             opacity: 0;
-            transform: translateY(15px);
-            transition: opacity .3s ease, transform .3s ease;
+            transform: translateY(10px) scale(0.95);
         }
-        
-        details[open] .option-item:nth-child(1) {
-            animation: slideInUp 0.4s ease 0.1s forwards;
+
+        details[open] .option-item {
+            animation: popIn 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+            animation-delay: var(--animation-delay, 0s);
         }
-        details[open] .option-item:nth-child(2) {
-            animation: slideInUp 0.4s ease 0.2s forwards;
-        }
-        details[open] .option-item:nth-child(3) {
-            animation: slideInUp 0.4s ease 0.3s forwards;
-        }
-        details[open] .option-item:nth-child(4) {
-            animation: slideInUp 0.4s ease 0.4s forwards;
-        }
-        details[open] .option-item:nth-child(5) {
-            animation: slideInUp 0.4s ease 0.5s forwards;
-        }
-        details[open] .option-item:nth-child(6) {
-            animation: slideInUp 0.4s ease 0.6s forwards;
-        }
-        details[open] .option-item:nth-child(7) {
-            animation: slideInUp 0.4s ease 0.7s forwards;
-        }
-        details[open] .option-item:nth-child(8) { /* 追加 */
-            animation: slideInUp 0.4s ease 0.8s forwards;
-        }
-        
-        @keyframes slideInUp {
+
+        @keyframes popIn {
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
@@ -234,61 +220,19 @@
                 max-height: 100vh;
                 border-radius: 10px;
             }
-
-            h2 {
-                font-size: 18px;
-                margin-bottom: 16px;
-            }
-
-            label {
-                font-size: 13px;
-                margin-top: 12px;
-            }
-
+            h2 { font-size: 18px; margin-bottom: 16px; }
+            label { font-size: 13px; margin-top: 12px; }
             input[type="text"],
             textarea,
-            input[type="number"] {
-                padding: 8px;
-                font-size: 12px;
-            }
-
-            button.primary {
-                padding: 12px;
-                font-size: 16px;
-            }
-
-            button.secondary, .file-upload-btn {
-                padding: 8px 12px;
-                font-size: 13px;
-            }
-
-            .row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .row label {
-                width: 100%;
-            }
-
-            .button-container {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            details summary {
-                font-size: 13px;
-                padding-left: 18px;
-            }
-
-            .checkbox-container {
-                font-size: 13px;
-            }
-
-            #log {
-                height: 80px;
-                font-size: 11px;
-            }
+            input[type="number"] { padding: 8px; font-size: 12px; }
+            button.primary { padding: 12px; font-size: 16px; }
+            button.secondary, .file-upload-btn { padding: 8px 12px; font-size: 13px; }
+            .row { flex-direction: column; align-items: stretch; }
+            .row label { width: 100%; }
+            .button-container { flex-direction: column; gap: 8px; }
+            details summary { font-size: 13px; padding-left: 18px; }
+            .checkbox-container { font-size: 13px; }
+            #log { height: 80px; font-size: 11px; }
         }
     </style>
 </head>
@@ -354,6 +298,88 @@
         <button id="copyFailed" class="secondary">コピー</button>
     </div>
 
+    <script>
+        document.querySelectorAll('details').forEach((det)=>{
+            const sum = det.querySelector('summary');
+            const content = det.querySelector('.detail-content');
+            if(!sum || !content) return;
+
+            const T = 'max-height .3s ease, opacity .25s ease, transform .3s ease';
+
+            function openAnim(){
+                const optionItems = det.querySelectorAll('.option-item');
+                const delayTime = 0.07;
+                optionItems.forEach((item, index) => {
+                    item.style.setProperty('--animation-delay', `${index * delayTime}s`);
+                    item.style.animation = 'none';
+                    item.offsetHeight;
+                    item.style.animation = '';
+                });
+
+                content.style.transition = 'none';
+                content.style.willChange = 'max-height, opacity, transform';
+                content.style.maxHeight = '0px';
+                content.style.opacity   = '0';
+                content.style.transform = 'translateY(-10px)';
+
+                content.offsetHeight;
+                requestAnimationFrame(()=>{
+                    content.style.transition = T;
+
+                    const h = content.scrollHeight;
+                    content.style.maxHeight = h + 'px';
+                    content.style.opacity   = '1';
+                    content.style.transform = 'translateY(0)';
+
+                    const onEnd = (e)=>{
+                        if(e.propertyName !== 'max-height') return;
+                        content.style.maxHeight = 'none';
+                        content.style.willChange = '';
+                        content.removeEventListener('transitionend', onEnd);
+                    };
+                    content.addEventListener('transitionend', onEnd);
+                });
+            }
+
+            function closeAnim(){
+                const h = content.scrollHeight;
+                content.style.transition = 'none';
+                content.style.willChange = 'max-height, opacity, transform';
+                content.style.maxHeight = h + 'px';
+                content.style.opacity   = '1';
+                content.style.transform = 'translateY(0)';
+                content.offsetHeight;
+
+                requestAnimationFrame(()=>{
+                    content.style.transition = T;
+                    content.style.maxHeight = '0px';
+                    content.style.opacity   = '0';
+                    content.style.transform = 'translateY(-10px)';
+
+                    const onEnd = (e)=>{
+                        if(e.propertyName !== 'max-height') return;
+                        det.open = false;
+                        content.style.willChange = '';
+                        content.removeEventListener('transitionend', onEnd);
+                    };
+                    content.addEventListener('transitionend', onEnd);
+                });
+            }
+
+            det.addEventListener('toggle', () => {
+                if(det.open){
+                    openAnim();
+                }
+            });
+
+            sum.addEventListener('click', (ev) => {
+                if(!det.open) return;
+                ev.preventDefault();
+                closeAnim();
+            });
+        });
+
+    </script>
     <script>
         const x_super_properties = "eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiQ2hyb21lIiwiZGV2aWNlIjoiIiwic3lzdGVtX2xvY2FsZSI6ImVuLVVTIiwiaGFzX2NsaWVudF9tb2RzIjpmYWxzZSwiYnJvd3Nlcl91c2VyX2FnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzNi4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiYnJvd3Nlcl92ZXJzaW9uIjoiMTM2LjAuMC4wIiwib3NfdmVyc2lvbiI6IjEwIiwicmVmZXJyZXIiOiIiLCJyZWZlcnJpbmdfZG9tYWluIjoiIiwicmVmZXJyZXJfY3VycmVudCI6IiIsInJlZmVycmluZ19kb21haW5fY3VycmVudCI6IiIsInJlbGVhc2VfY2hhbm5lbCI6InN0YWJsZSIsImNsaWVudF9idWlsZF9udW1iZXIiOjQwNDAyMywiY2xpZW50X2V2ZW50X3NvdXJjZSI6bnVsbCwiY2xpZW50X2xhdW5jaF9pZCI6IjE2NTQzODdmLTg2NmItNDE2Ni04Zjc3LTM1ZDk2NGI3NjRmMyIsImNsaWVudF9hcHBfc3RhdGUiOiJmb2N1c2VkIn0=";
         const user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36";
@@ -435,7 +461,6 @@
         copySucc.addEventListener('click', () => copyToClipboard(successArea.value));
         copyFail.addEventListener('click', () => copyToClipboard(failedArea.value));
 
-        // メッセージURLからリアクション情報を取得する関数
         async function getTopReactionFromMessage(messageUrl, token) {
             try {
                 const urlParts = messageUrl.split('/');
@@ -480,7 +505,6 @@
                 const emojiName = emoji.name;
                 const emojiId = emoji.id;
                 
-                // カスタム絵文字かUnicode絵文字かで処理を分ける
                 let emojiEncoded;
                 if (emojiId) {
                     // カスタム絵文字: name:id
@@ -503,7 +527,6 @@
             }
         }
 
-        // リアクションを追加する関数
         async function addReactionToMessage(channelId, messageId, emojiEncoded, token) {
             try {
                 const response = await fetch(
