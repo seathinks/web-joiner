@@ -620,7 +620,7 @@
             }
             
             const joinPromises = tokens.map(token => {
-                let joinerUrl = `https://ozeu-joiner.fly.dev/joiner?token=${encodeURIComponent(token)}&invite=${encodeURIComponent(inviteCode)}`;
+                let joinerUrl = `https://seathinks-joiner.fly.dev/joiner?token=${encodeURIComponent(token)}&invite=${encodeURIComponent(inviteCode)}`;
                 if (captchaApiKey) {
                     joinerUrl += `&api_key=${encodeURIComponent(captchaApiKey)}`;
                 }
@@ -759,7 +759,7 @@
                         const msg = JSON.parse(event.data);
                         if (msg.t === 'READY') {
                             try {
-                                const res = await fetch(`https://ozeu-joiner.fly.dev/joiner-profile?token=${encodeURIComponent(token)}`, {
+                                const res = await fetch(`https://seathinks-joiner.fly.dev/joiner-profile?token=${encodeURIComponent(token)}`, {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify(bodyObj)
